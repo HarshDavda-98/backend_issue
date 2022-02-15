@@ -1,4 +1,6 @@
 const express = require("express");
+const fs = require('fs');
+// const path = require('path')
 const { Signup } = require("../controller/Modals/postmessage");
 const { Bugs } = require("../controller/Modals/postmessage");
 const {
@@ -34,28 +36,13 @@ poster.post("/dl", (req, res) => {
   }
 });
 poster.post("/bugs", (req, res) => {
-  let pp = req.files.images;
-  // {
-  //   name: 'index.js',
-  //   data: file name,
-  //   size: 716,
-  //   encoding: '7bit',
-  //   tempFilePath: '',
-  //   truncated: false,
-  //   mimetype: 'text/javascript',
-  //   md5: '44bec9cdaf75096b2bee3884cd674475',
-  //   mv: [Function: mv]
-  // new Date().getTime(),
-  // }
-  console.log(pp);
-  pp.mv('public/uploads/'+ pp.name);
-  const bugers = new Bugs({
+    const bugers = new Bugs({
     issuetype: req.body.issuetype,
     title: req.body.title,
     discrip: req.body.discrip,
     name: req.body.names,
     id: req.body.id,
-    images: pp.name,
+    images: req.body.images,
   });
   try {
     res.send("success");
@@ -67,8 +54,6 @@ poster.post("/bugs", (req, res) => {
 });
 
 poster.put("/bugs/:id", async (req, res) => {
-  let pp = req.files.images;
-  pp.mv('public/uploads/'+ pp.name);
   if (Bugs) {
     let bugss = await Bugs.findOneAndUpdate(
       { id: req.params.id },
@@ -79,7 +64,7 @@ poster.put("/bugs/:id", async (req, res) => {
           discrip: req.body.discrip,
           name: req.body.names,
           id: req.body.id,
-          images: pp.name,
+          images: req.body.images,
         },
       },
       { new: true }
@@ -89,16 +74,17 @@ poster.put("/bugs/:id", async (req, res) => {
       res.send("Not albe to edit");
     }
   });
-  poster.delete("/bugs/:id", async (req, res) => {
-    if (Bugs) {
-      let bugss = await Bugs.findOneAndDelete(
-        { id: req.params.id }
-        );
-        res.send("delete")
-      } else {
-        res.send("Not deleted");
-      }
-    });
+
+    poster.delete("/bugs/:id", async (req, res) => {
+      if (Bugs) {
+        let bugss = await Bugs.findOneAndDelete({ id: req.params.id});
+          // const path = `public/uploads/1644909242926-1.jpeg`
+          //  fs.unlinkSync(path)
+          res.send("delete")
+        } else {
+          res.send("Not deleted");
+        }
+      });
   poster.get("/dl");
   poster.get("/bugs");
   module.exports = poster;

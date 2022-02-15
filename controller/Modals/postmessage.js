@@ -42,9 +42,8 @@ const bugs = ({
     type:Number
   },
   images: {
+    required:true,
     type: String,
-    trim: true,
-    // required: true
 }
  
 })

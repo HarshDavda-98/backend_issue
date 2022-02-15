@@ -1,5 +1,5 @@
 const  {Bugs,Signup} = require("./Modals/postmessage")
-// const Bugs = require("./Modals/postmessage")
+// const Bugs = require("./Modals/postmessage")z
 
 const getpost = async(req, res) => {
     try {
