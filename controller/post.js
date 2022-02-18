@@ -4,13 +4,17 @@ const  {Bugs,Signup} = require("./Modals/postmessage")
 const getpost = async(req, res) => {
     try {
         const postMessage = await Signup.find();
-        // console.log(postMessage);
       return  res.status(200).json(postMessage);
     } catch (error) {
             res.status(404).json({message:error.message});         
     }
 };
+// poster.get("/dl", getpost);
+// poster.get("/dl", getmessage);
 
+// poster.get("/bugs", getBugs);
+// poster.get("/bugss", getbugbody);
+  
 const getmessage = async(req, res) => {
     const post = req.body;
     const newPost = new PostMessage(post) 
@@ -22,6 +26,7 @@ const getmessage = async(req, res) => {
     }
   };
 
+
   const getBugs = async(req, res) => {
     try {
         const postBugs = await Bugs.find();
@@ -31,7 +36,8 @@ const getmessage = async(req, res) => {
     }
 };
 
-
+// poster.get("/bugs", getBugs);
+// poster.get("/bugss", getbugbody);
 
 const getbugbody = async(req, res) => {
     const postbugs = req.body;
@@ -43,5 +49,6 @@ const getbugbody = async(req, res) => {
         res.status(409).json({message:error.message}); 
     }
   };
+  
   module.exports = {getpost,getmessage,getBugs,getbugbody};
   

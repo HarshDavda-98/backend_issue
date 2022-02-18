@@ -1,38 +1,34 @@
+const { sign } = require("crypto");
 const express = require("express");
 const fs = require('fs');
 // const path = require('path')
 const { Signup } = require("../controller/Modals/postmessage");
 const { Bugs } = require("../controller/Modals/postmessage");
-const {
-  getpost,
-  getmessage,
-  getBugs,
-  getbugbody,
-} = require("../controller/post");
+const {getpost,getBugs} = require("../controller/post");
 const poster = express.Router();
 
 poster.get("/dl", getpost);
-poster.get("/dl", getmessage);
 
 poster.get("/bugs", getBugs);
-poster.get("/bugs", getbugbody);
   
-poster.post("/dl", (req, res) => {
-  const posters = new Signup({
-    id: req.body.id,
-    username: req.body.username,
-    user_type: req.body.user_type,
-    email: req.body.email,
-    password: req.body.password,
-    re_password: req.body.re_password,
-  });
-  
+poster.post("/dl", async(req, res) => {
+  const {id,username,user_type,email,password,re_password } = req.body;
+  const emailreadyin = await Signup.findOne({email:email}).catch((err)=>{console.log(err)});
+  const userNamein = await Signup.findOne({username:username}).catch((err)=>{console.log(err)});
+  if(emailreadyin){
+    return res.status(409).json({msg:"Emails is already registered"});
+  }if(userNamein){
+    return res.status(409).json({msg:"UserName is already registered"});
+  }
+  const posters = new Signup({id: id, username: username,user_type: user_type,email: email, password: password,re_password:re_password,});
+
   try {
-    res.send("success");
+    res.status(200).send("success");
     const a1 = posters.save();
     res.json(a1);
+    res.send(a1);
   } catch (err) {
-    res.send("Error");
+    res.status(503).send("Error");
   }
 });
 poster.post("/bugs", (req, res) => {
@@ -45,11 +41,11 @@ poster.post("/bugs", (req, res) => {
     images: req.body.images,
   });
   try {
-    res.send("success");
+    res.status(200).send("success");
     const a11 = bugers.save();
     res.json(a11);
   } catch (err) {
-    res.send("Error");
+    res.status(503).send("Error");
   }
 });
 
@@ -69,9 +65,9 @@ poster.put("/bugs/:id", async (req, res) => {
       },
       { new: true }
       );
-      res.send(bugss)
+      res.status(200).send(bugss)
     } else {
-      res.send("Not albe to edit");
+      res.status(503).send("Not albe to edit");
     }
   });
 
@@ -80,12 +76,10 @@ poster.put("/bugs/:id", async (req, res) => {
         let bugss = await Bugs.findOneAndDelete({ id: req.params.id});
           // const path = `public/uploads/1644909242926-1.jpeg`
           //  fs.unlinkSync(path)
-          res.send("delete")
+          res.status(200).send("delete")
         } else {
-          res.send("Not deleted");
+          res.status(503).send("Not deleted");
         }
       });
-  poster.get("/dl");
-  poster.get("/bugs");
   module.exports = poster;
   
